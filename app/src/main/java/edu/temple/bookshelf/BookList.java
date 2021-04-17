@@ -28,6 +28,16 @@ public class BookList implements Parcelable {
         }
     };
 
+    public void clear () {
+        books.clear();
+    }
+
+    public void addAll (BookList books) {
+        for (int i = 0; i < books.size(); i++) {
+            this.books.add(books.get(i));
+        }
+    }
+
     public void add(Book book) {
         books.add(book);
     }

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BookShelf</string>
+    <string name="error_no_results" />
+    <string name="notification_playing_title" />
+    <string name="notification_playing_description" />
+    <string name="notification_channel" />
+    <string name="notification_channel_description" />
 </resources>

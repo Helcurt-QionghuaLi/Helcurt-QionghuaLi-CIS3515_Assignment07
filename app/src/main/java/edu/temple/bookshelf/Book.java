@@ -7,12 +7,14 @@ public class Book implements Parcelable{
     private String title;
     private String author;
     private int id;
+    private int duration;
     private String coverURL;
 
-    public Book(String title, String author, int id, String coverURL) {
+    public Book(String title, String author, int id, int duration, String coverURL) {
         this.title = title;
         this.author = author;
         this.id = id;
+        this.duration = duration;
         this.coverURL = coverURL;
     }
 
@@ -20,6 +22,7 @@ public class Book implements Parcelable{
         title = in.readString();
         author = in.readString();
         id = in.readInt();
+        duration = in.readInt();
         coverURL = in.readString();
     }
 
@@ -65,6 +68,14 @@ public class Book implements Parcelable{
         this.id = id;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration){
+        this.duration = duration;
+    }
+
     public String getCoverURL() {
 
         return coverURL;
@@ -83,7 +94,10 @@ public class Book implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(duration);
         parcel.writeString(title);
         parcel.writeString(author);
+        parcel.writeString(coverURL);
     }
 }

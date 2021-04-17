@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 public class BookListFragment extends Fragment {
@@ -16,6 +17,7 @@ public class BookListFragment extends Fragment {
     private BookList books;
 
     BookSelectedInterface parentActivity;
+    ListView listView;
 
     public BookListFragment() {}
 
@@ -73,6 +75,9 @@ public class BookListFragment extends Fragment {
         return listView;
     }
 
+    public void showNewBooks() {
+        ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+    }
     /*
     Interface for communicating with attached activity
      */
