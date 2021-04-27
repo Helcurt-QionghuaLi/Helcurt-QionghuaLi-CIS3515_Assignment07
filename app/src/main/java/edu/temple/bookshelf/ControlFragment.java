@@ -8,61 +8,85 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.SeekBar;
 
-public class ControlFragment extends AppCompatActivity {
+public class ControlFragment extends Fragment {
 
-    MediaPlayer mediaPlayer;
-    SeekBar seekBar;
-    Handler handler = new Handler();
+    private ControlInterface parentActivity;
 
-    public void playAudio(View view){
-        mediaPlayer.start();
-        UpdateSeekBar updateSeekBar = new UpdateSeekBar();
-        handler.post(updateSeekBar);
+    private TextView nowPlayingTextView;
+    private SeekBar seekBar;
 
+    public ControlFragment() {
+        // Required empty public constructor
     }
 
-    public void pauseAudio(View view){
-        mediaPlayer.pause();
-    }
-
-    public void stopAudio(View view){
-        mediaPlayer.stop();
-    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_audio_play);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        mediaPlayer = MediaPlayer.create(this,R.AudiobookService);
-        seekBar = findViewById(R.id.seekBar);
-        seekBar.setMax(mediaPlayer.getDuration());
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        if (context instanceof ControlInterface)
+            parentActivity = (ControlInterface) context;
+        else
+            throw new RuntimeException("Please implement ControlFragment.ControlInterface");
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View l = inflater.inflate(R.layout.fragment_control, container, false);
+
+        nowPlayingTextView = l.findViewById(R.id.nowPlayingTextView);
+        seekBar = l.findViewById(R.id.seekBar);
+
+        l.findViewById(R.id.playButton).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser){
-                    mediaPlayer.seekTo(progress)
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+            public void onClick(View view) {
+                parentActivity.play();
             }
         });
+        l.findViewById(R.id.pauseButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                parentActivity.pause();
+            }
+        });
+        l.findViewById(R.id.stopButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                parentActivity.stop();
+            }
+        });
+
+        // If the user is dragging the seekbar, update the book position
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (b)
+                    parentActivity.changePosition(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+
+        return l;
     }
 
-    public class UpdateSeekBar implements Runnable{
+    public void setNowPlaying(String title) {
+        nowPlayingTextView.setText(title);
+    }
 
-        @Override
-        public void run() {
-            seekBar.setProgress(mediaPlayer.getCurrentPosition());
-            handler.postDelayed(this,100);
+    public void updateProgress(int progress) {
+        seekBar.setProgress(progress);
+    }
 
-        }
+    interface ControlInterface {
+        void play();
+        void pause();
+        void stop();
+        void changePosition (int progress);
     }
 }
